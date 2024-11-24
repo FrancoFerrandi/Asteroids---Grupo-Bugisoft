@@ -24,10 +24,10 @@ fakeheal_big = pygame.transform.scale(fakeheal_sprite, (1500, 1500))
 #balas
 
 bullet_e_sprite = pygame.image.load("assets/sprites/bullet_e.png")
-bullet_e_big = pygame.transform.scale(bullet_e_sprite, (1500, 1500))
+bullet_e_big = pygame.transform.scale(bullet_e_sprite, (10, 10))
 
 bullet_f_sprite = pygame.image.load("assets/sprites/bullet_f.png")
-bullet_f_big = pygame.transform.scale(bullet_f_sprite, (1500, 1500))
+bullet_f_big = pygame.transform.scale(bullet_f_sprite, (10, 10))
 
 #asteroides
 
