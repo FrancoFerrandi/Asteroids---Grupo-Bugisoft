@@ -4,6 +4,7 @@ from settings import *
 from sprites import *
 import random
 
+pygame.init() # inicializa todos los módulos de Pygame que sean necesarios para ejecutar un juego o aplicación (display, font, event)
 
 pygame.display.set_caption("Asteroids")
 
@@ -11,7 +12,7 @@ pygame.display.set_caption("Asteroids")
 clock = pygame.time.Clock() 
 display = pygame.display.set_mode((SX, SY))
 gg = False
-
+lives = 3
 
 class Player():
     def __init__(self):
@@ -30,6 +31,11 @@ class Player():
         self.sin = math.sin(math.radians(self.angle + 90))
         
         self.head = (self.x + self.cos * self.w//2, self.y + self.sin * self.h//2)
+        self.rect = pygame.Rect(self.x - self.w // 2, self.y - self.h // 2, self.w, self.h)  # Rectángulo de colisión contra asteroides y balas
+
+    def update_rect(self):
+        self.rect.center = (self.x, self.y) # actualizar rectangulo de coalision
+
     def draw(self, display):
         #display.blit(self.img, (self.x, self.y, self.w, self.h))
         display.blit(self.rotateSprite, self.rotateRect)
@@ -61,6 +67,7 @@ class Player():
         self.cos = math.cos(math.radians(self.angle + 90))
         self.sin = math.sin(math.radians(self.angle + 90))
         self.head = (self.x + self.cos * self.w//2, self.y + self.sin * self.h//2)
+        self.update_rect() # actualizar rectangulo de coalision
         
     def move_backwards(self):
         self.x += self.cos * 6
@@ -71,6 +78,7 @@ class Player():
         self.cos = math.cos(math.radians(self.angle + 90))
         self.sin = math.sin(math.radians(self.angle + 90))
         self.head = (self.x + self.cos * self.w//2, self.y + self.sin * self.h//2)
+        self.update_rect() # actualizar rectangulo de coalision
 
 """class Bullet():
     def __init__(self):
@@ -209,11 +217,17 @@ class Asteroid():
     
 def redraw_game_window():
     display.blit(bg_big, (0, 0))
+    font = pygame.font.SysFont('arial',30)
+    lives_text = font.render('Lives: ' + str(lives), 1, (255, 255, 255))
+    playAgainText = font.render('Press Space to Play Again', 1, (255,255,255))
     player.draw(display)
     for i in player_bullet:
         i.draw(display)
     for i in asteroids:
         i.draw(display)
+    if gg:
+        display.blit(playAgainText, (SX//2-playAgainText.get_width()//2, SY//2 - playAgainText.get_height()//2))
+    display.blit(lives_text, (25, 25))
     pygame.display.update()
 
 player = Player()
@@ -223,9 +237,6 @@ count = 0
 
 run = True
 #bandera para verificar si el juego esta siendo renderizado para saber si debe finalizar el codigo
-
-
-
 
 while run:  
     clock.tick(60)
@@ -239,6 +250,13 @@ while run:
         
         for a in asteroids:
             a.move()
+
+            # Colisión entre asteroide y jugador
+            if player.rect.colliderect(a.rect):
+                lives -= 1
+                asteroids.pop(asteroids.index(a))
+                break
+
             # Colisión entre bala y asteroide
             for b in player_bullet:
                 if b.rect.colliderect(a.rect):
@@ -259,6 +277,9 @@ while run:
                     asteroids.pop(asteroids.index(a))
                     player_bullet.pop(player_bullet.index(b))
                     break
+        
+        if lives <= 0:
+            gg = True
 
         keys = pygame.key.get_pressed()
         if keys[pygame.K_a]:
@@ -277,6 +298,11 @@ while run:
             if event.key == pygame.K_SPACE:
                 if not gg:
                     player_bullet.append(Bullet())
+                else:
+                    gg = False
+                    lives = 3
+                    asteroids.clear()
+
     redraw_game_window()
 pygame.quit()           
             
