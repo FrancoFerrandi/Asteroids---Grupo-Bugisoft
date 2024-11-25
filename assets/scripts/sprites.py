@@ -32,10 +32,10 @@ bullet_f_big = pygame.transform.scale(bullet_f_sprite, (10, 10))
 #asteroides
 
 asteroid_s_sprite = pygame.image.load("assets/sprites/asteroid_s.png")
-asteroid_s_big = pygame.transform.scale(asteroid_s_sprite, (25, 25))
+asteroid_s_big = pygame.transform.scale(asteroid_s_sprite, (30, 30))
 
 asteroid_m_sprite = pygame.image.load("assets/sprites/asteroid_m.png")
-asteroid_m_big = pygame.transform.scale(asteroid_m_sprite, (150, 150))
+asteroid_m_big = pygame.transform.scale(asteroid_m_sprite, (65, 65))
 
 asteroid_l_sprite = pygame.image.load("assets/sprites/asteroid_L.png")
-asteroid_l_big = pygame.transform.scale(asteroid_l_sprite, (300, 300))
+asteroid_l_big = pygame.transform.scale(asteroid_l_sprite, (100, 100))

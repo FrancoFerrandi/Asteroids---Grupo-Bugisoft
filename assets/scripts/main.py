@@ -92,7 +92,26 @@ class Player():
         display.blit(self.img, (self.x, self.y, self.w, self.h))
     """
 class Bullet():
+    """
+    Representa una bala disparada por el jugador.
+
+    Atributos:
+        img (pygame.Surface): Imagen de la bala.
+        point (tuple): Coordenadas iniciales de la bala (posición del "cañón" del jugador).
+        x (float): Coordenada x actual de la bala.
+        y (float): Coordenada y actual de la bala.
+        w (int): Ancho de la imagen de la bala.
+        h (int): Alto de la imagen de la bala.
+        cos (float): Valor del coseno de la dirección de disparo (basado en la orientación del jugador).
+        sin (float): Valor del seno de la dirección de disparo (basado en la orientación del jugador).
+        velx (float): Velocidad horizontal de la bala.
+        vely (float): Velocidad vertical de la bala.
+        rect (pygame.Rect): Rectángulo de colisión de la bala.
+    """
     def __init__(self):
+        """
+        Inicializa una bala disparada desde la posición y orientación del jugador.
+        """
         self.img = bullet_f_big
         self.point = player.head
         self.x, self.y = self.point
@@ -105,22 +124,54 @@ class Bullet():
         self.rect = pygame.Rect(self.x, self.y, self.w, self.h)  # Rectángulo de colisión
 
     def move(self):
+        """
+        Mueve la bala en la dirección calculada y actualiza su rectángulo de colisión.
+        """
         self.x += self.velx
         self.y -= self.vely
         self.rect.topleft = (self.x, self.y)  # Actualiza la posición del rect
 
     def draw(self, display):
+        """
+        Dibuja la bala en la ventana del juego.
+
+        Args:
+            display (pygame.Surface): Ventana del juego donde se dibuja la bala.
+        """
         display.blit(self.img, (self.x, self.y))
 
 class Asteroid():
+    """
+    Representa un asteroide en el juego.
+
+    Atributos:
+        rank (int): El tamaño del asteroide (1 = grande, 2 = mediano, 3 = pequeño).
+        image (pygame.Surface): Imagen del asteroide según su tamaño.
+        w (int): Ancho de la imagen del asteroide.
+        h (int): Alto de la imagen del asteroide.
+        ranPoint (tuple): Posición inicial aleatoria del asteroide fuera de la pantalla.
+        x (int): Coordenada x actual del asteroide.
+        y (int): Coordenada y actual del asteroide.
+        rect (pygame.Rect): Rectángulo de colisión del asteroide.
+        xdir (int): Dirección inicial del asteroide en el eje x (-1 o 1).
+        ydir (int): Dirección inicial del asteroide en el eje y (-1 o 1).
+        xv (int): Velocidad horizontal del asteroide.
+        yv (int): Velocidad vertical del asteroide.
+    """
     def __init__(self, rank):
+        """
+        Inicializa un asteroide con un tamaño y posición aleatorios.
+
+        Args:
+            rank (int): Tamaño del asteroide (1 = grande, 2 = mediano, 3 = pequeño).
+        """
         self.rank = rank
         if self.rank == 1:
             self.image = asteroid_s_big
         elif self.rank == 2:
-            self.image = asteroid_m_sprite
+            self.image = asteroid_m_big
         else:
-            self.image = asteroid_l_sprite
+            self.image = asteroid_l_big
         self.w = self.image.get_width()
         self.h = self.image.get_height()
         self.ranPoint = random.choice([(random.randrange(0, SX-self.w), random.choice([-1*self.h - 5, SY + 5])), (random.choice([-1*self.w - 5, SX + 5]), random.randrange(0, SY - self.h))])
@@ -138,11 +189,21 @@ class Asteroid():
         self.yv = self.ydir * random.randrange(1, 3)
 
     def move(self):
+        """
+        Mueve el asteroide en la dirección y velocidad actuales,
+        y actualiza su rectángulo de colisión.
+        """
         self.x += self.xv
         self.y += self.yv
         self.rect.topleft = (self.x, self.y)  # Actualiza la posición del rect
 
     def draw(self, win):
+        """
+        Dibuja el asteroide en la ventana del juego.
+
+        Args:
+            win (pygame.Surface): Ventana del juego donde se dibuja el asteroide.
+        """
         win.blit(self.image, (self.x, self.y))
 
     
@@ -176,52 +237,6 @@ while run:
         for i in player_bullet:
             i.move()
         
-        """ for a in asteroids:
-            a.x += a.xv
-            a.y += a.yv
-
-            if (a.x >= player.x - player.w//2 and a.x <= player.x + player.w//2) or (a.x + a.w <= player.x + player.w//2 and a.x + a.w >= player.x - player.w//2):
-                if(a.y >= player.y - player.h//2 and a.y <= player.y + player.h//2) or (a.y  +a.h >= player.y - player.h//2 and a.y + a.h <= player.y + player.h//2):
-                    #lives -= 1
-                    asteroids.pop(asteroids.index(a))
-                    #if isSoundOn:
-                    #    bangLargeSound.play()
-                    break
-            # coalision de bala a asteroide
-            for b in player_bullet:
-                if (b.x >= a.x and b.x <= a.x + a.w) or b.x + b.w >= a.x and b.x + b.w <= a.x + a.w:
-                    if (b.y >= a.y and b.y <= a.y + a.h) or b.y + b.h >= a.y and b.y + b.h <= a.y + a.h:
-                        if a.rank == 3:
-                            #if isSoundOn:
-                            #    bangLargeSound.play()
-                            # score += 10
-                            na1 = Asteroid(2)
-                            na2 = Asteroid(2)
-                            na1.x = a.x
-                            na2.x = a.x
-                            na1.y = a.y
-                            na2.y = a.y
-                            asteroids.append(na1)
-                            asteroids.append(na2)
-                        elif a.rank == 2:
-                            #if isSoundOn:
-                            #    bangSmallSound.play()
-                            #score += 20
-                            na1 = Asteroid(1)
-                            na2 = Asteroid(1)
-                            na1.x = a.x
-                            na2.x = a.x
-                            na1.y = a.y
-                            na2.y = a.y
-                            asteroids.append(na1)
-                            asteroids.append(na2)
-                        #else:
-                            #score += 30
-                            #if isSoundOn:
-                            #    bangSmallSound.play()
-                        asteroids.pop(asteroids.index(a))
-                        player_bullet.pop(player_bullet.index(b))
-                        break"""
         for a in asteroids:
             a.move()
             # Colisión entre bala y asteroide
