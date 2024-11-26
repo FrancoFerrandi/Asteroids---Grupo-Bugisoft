@@ -235,7 +235,7 @@ class Star():
         xv (int): Velocidad en el eje x.
         yv (int): Velocidad en el eje y.
         rect (pygame.Rect): Rectángulo de colisión de la estrella.
-        effect (str): Tipo de efecto de la estrella ('boost' para potencia de fuego, 'life' para restar vida).
+        effect (str): Tipo de efecto de la estrella ('boost' para potencia de fuego, 'lesslife' para restar vida).
     """
     def __init__(self):
         """
@@ -265,7 +265,72 @@ class Star():
         self.rect = pygame.Rect(self.x, self.y, self.w, self.h)
 
         # Determinar aleatoriamente si la estrella dará un boost de fuego o quitará una vida
-        self.effect = random.choice(['boost', 'life'])
+        self.effect = random.choice(['boost', 'lesslife'])
+
+    def move(self):
+        """
+        Actualiza la posición de la estrella y su rectángulo de colisión.
+        """
+        self.x += self.xv
+        self.y += self.yv
+        self.rect.topleft = (self.x, self.y)  # Actualizar rectángulo de colisión
+
+    def draw(self, display):
+        """
+        Dibuja la estrella en la ventana del juego.
+
+        Args:
+            display (pygame.Surface): La superficie del juego donde se dibuja la estrella.
+        """
+        display.blit(self.img, (self.x, self.y))
+
+class LifeStar():
+    """
+    Representa una estrella que regenera 1 vida al jugador cuando colisiona con ella.
+
+    Atributos:
+        img (pygame.Surface): Imagen de la estrella.
+        w (int): Ancho de la imagen de la estrella.
+        h (int): Alto de la imagen de la estrella.
+        ran_point (tuple): Posición aleatoria inicial de la estrella fuera de la pantalla.
+        x (int): Coordenada x actual de la estrella.
+        y (int): Coordenada y actual de la estrella.
+        xdir (int): Dirección inicial en el eje x (1 o -1).
+        ydir (int): Dirección inicial en el eje y (1 o -1).
+        xv (int): Velocidad en el eje x.
+        yv (int): Velocidad en el eje y.
+        rect (pygame.Rect): Rectángulo de colisión de la estrella.
+        effect (str): Tipo de efecto de la estrella ('life' para regenerar vida).
+    """
+    def __init__(self):
+        """
+        Inicializa una estrella con una posición aleatoria fuera de la pantalla y el efecto 'morelife'.
+        """
+        self.img = heal_big  # Puedes usar la misma imagen o una diferente si prefieres.
+        self.w = self.img.get_width()
+        self.h = self.img.get_height()
+
+        # Generar coordenadas iniciales
+        self.ran_point = random.choice([  # Estrella apareciendo en el borde de la pantalla.
+            (random.randrange(0, max(1, SX - self.w)), random.choice([-1 * self.h - 5, SY + 5])),
+            (random.choice([-1 * self.w - 5, SX + 5]), random.randrange(0, max(1, SY - self.h)))
+        ])
+
+        self.x, self.y = self.ran_point
+
+        # Determinar dirección de la estrella
+        self.xdir = 1 if self.x < SX // 2 else -1
+        self.ydir = 1 if self.y < SY // 2 else -1
+
+        # Velocidad
+        self.xv = self.xdir * 2
+        self.yv = self.ydir * 2
+
+        # Rectángulo de colisión
+        self.rect = pygame.Rect(self.x, self.y, self.w, self.h)
+
+        # Efecto de la estrella (regenerar vida)
+        self.effect = 'morelife'
 
     def move(self):
         """
@@ -327,6 +392,8 @@ def comenzar_juego():
                 asteroids.append(Asteroid(ran))
             if count % 1000 == 0:
                 stars.append(Star())
+            if count % 2500 == 0: 
+                stars.append(LifeStar())
             for i in player_bullet:
                 i.move()
         
@@ -386,20 +453,32 @@ def comenzar_juego():
                     stars.remove(s)
                     continue
                 
-                
                 # Colisión entre estrellas y balas
                 for b in player_bullet[:]:
                     if s.rect.colliderect(b.rect):  # Usar los rectángulos de colisión
                         if s.effect == 'boost':
                             fire_boost = True
                             f_boost = count
-                        elif s.effect == 'life':
+                        elif s.effect == 'lesslife':
                             lives -= 1
+                        elif s.effect == 'morelife':
+                            lives += 1 
 
                         stars.remove(s)
                         player_bullet.remove(b)
                         break
 
+                # Colisión entre la estrella y el jugador
+                if player.rect.colliderect(s.rect):
+                        if s.effect == 'boost':
+                            fire_boost = True
+                            f_boost = count
+                        elif s.effect == 'lesslife':
+                            lives -= 1
+                        elif s.effect == 'morelife':
+                            lives += 1 
+
+                        stars.remove(s)  # Eliminar la estrella después de recogerla
 
             if lives <= 0:
                 gg = True
