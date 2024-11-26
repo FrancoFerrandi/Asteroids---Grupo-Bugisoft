@@ -1,9 +1,13 @@
 import pygame
 import sys
 from juego import *
-from sprites import *
-
+from spritevalues import *
+from settings import *
+from sfx import *
 pygame.init()
+pygame.mixer.init()
+
+select_sfx = pygame.mixer.Sound("assets/sounds/select.wav")
 
 ALTO, ANCHO = 720, 720 
 
@@ -38,12 +42,16 @@ def menu_principal():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:
                     opcion_elegida = (opcion_elegida - 1) % len(opciones_menu)
+                    select_sfx.play()
                 if event.key == pygame.K_DOWN:
                     opcion_elegida = (opcion_elegida + 1) % len(opciones_menu)
+                    select_sfx.play()
                 if event.key == pygame.K_RETURN:
+                    select_sfx.play()
                     if opcion_elegida == 0:  # Comenzar juego
                         bandera_menu = False
                         comenzar_juego()
+                        
                     elif opcion_elegida == 1:  # Controles
                         mostrar_controles()
                     elif opcion_elegida == 2:  # Créditos

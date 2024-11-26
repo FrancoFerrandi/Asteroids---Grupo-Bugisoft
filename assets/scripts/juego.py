@@ -1,14 +1,44 @@
 import pygame
 import math
 from settings import *
-from sprites import *
+from spritevalues import *
 import random
+from sfx import *
+
+
+
+
 
 pygame.init() # inicializa todos los módulos de Pygame que sean necesarios para ejecutar un juego o aplicación (display, font, event)
-
+pygame.mixer.init()
 pygame.display.set_caption("Asteroids")
 
-#para inicializar un delta time 
+
+
+#Sonidos que hay que modulizar en el archivo sfx.py(no puedo modulizar que la chupe este codigo)
+soundtrack_sfx = pygame.mixer.Sound("assets/sounds/game_soundtrack.mp3")
+soundtrack_sfx.set_volume(GAMEOST_VOLUME)
+
+shoot_sfx = pygame.mixer.Sound("assets/sounds/laserShoot.wav")
+rapidshoot_sfx = pygame.mixer.Sound("assets/sounds/rapidshoot.wav")
+
+asteroidL_sfx = pygame.mixer.Sound("assets/sounds/explosion.wav")
+asteroidM_sfx = pygame.mixer.Sound("assets/sounds/explosion_m.wav")
+asteroidS_sfx = pygame.mixer.Sound("assets/sounds/explosion_s.wav")
+
+hit_sfx = pygame.mixer.Sound("assets/sounds/hit.wav")
+
+pickup_sfx = pygame.mixer.Sound("assets/sounds/pickup.wav")
+
+
+powerup_sfx = pygame.mixer.Sound("assets/sounds/powerup.wav")
+powerdown_sfx = pygame.mixer.Sound("assets/sounds/powerdown.wav")
+
+select_sfx = pygame.mixer.Sound("assets/sounds/select.wav")
+
+dead_sfx = pygame.mixer.Sound("assets/sounds/dead.wav")
+
+
 clock = pygame.time.Clock() 
 display = pygame.display.set_mode((SX, SY))
 gg = False
@@ -16,6 +46,8 @@ lives = 3
 score = 0
 fire_boost = False
 f_boost = -1
+isSoundOn = True
+
 
 class Player():
     def __init__(self):
@@ -44,7 +76,7 @@ class Player():
         display.blit(self.rotateSprite, self.rotateRect)
         
     def rotate_left(self):
-        self.angle += 5
+        self.angle += PLAYER_ROTATION_VEL
         self.rotateSprite = pygame.transform.rotate(self.img, self.angle)
         self.rotateRect = self.rotateSprite.get_rect()
         self.rotateRect.center = (self.x, self.y)
@@ -53,7 +85,7 @@ class Player():
         self.head = (self.x + self.cos * self.w//2, self.y + self.sin * self.h//2)
         
     def rotate_right(self):
-        self.angle -= 5
+        self.angle -= PLAYER_ROTATION_VEL
         self.rotateSprite = pygame.transform.rotate(self.img, self.angle)
         self.rotateRect = self.rotateSprite.get_rect()
         self.rotateRect.center = (self.x, self.y)
@@ -62,8 +94,8 @@ class Player():
         self.head = (self.x + self.cos * self.w//2, self.y + self.sin * self.h//2)
         
     def move_forward(self):
-        self.x += self.cos * 6
-        self.y -= self.sin * 6
+        self.x += self.cos * PLAYER_VEL
+        self.y -= self.sin * PLAYER_VEL
         self.rotateSprite = pygame.transform.rotate(self.img, self.angle)
         self.rotateRect = self.rotateSprite.get_rect()
         self.rotateRect.center = (self.x, self.y)
@@ -73,8 +105,8 @@ class Player():
         self.update_rect() # actualizar rectangulo de coalision
         
     def move_backwards(self):
-        self.x += self.cos * 6
-        self.y += self.sin * 6
+        self.x += self.cos * PLAYER_VEL
+        self.y += self.sin * PLAYER_VEL
         self.rotateSprite = pygame.transform.rotate(self.img, self.angle)
         self.rotateRect = self.rotateSprite.get_rect()
         self.rotateRect.center = (self.x, self.y)
@@ -130,8 +162,8 @@ class Bullet():
         self.h = self.img.get_height()
         self.cos = player.cos
         self.sin = player.sin
-        self.velx = self.cos * 10
-        self.vely = self.sin * 10
+        self.velx = self.cos * BULLET_VEL
+        self.vely = self.sin * BULLET_VEL
         self.rect = pygame.Rect(self.x, self.y, self.w, self.h)  # Rectángulo de colisión
 
     def move(self):
@@ -189,13 +221,13 @@ class Asteroid():
         self.x, self.y = self.ran_point
         self.rect = pygame.Rect(self.x, self.y, self.w, self.h)  # Rectángulo de colisión
         if self.x < SX//2:
-            self.xdir = 1
+            self.xdir = ASTEROID_VEL
         else:
-            self.xdir = -1
+            self.xdir = -ASTEROID_VEL
         if self.y < SY//2:
-            self.ydir = 1
+            self.ydir = ASTEROID_VEL
         else:
-            self.ydir = -1
+            self.ydir = -ASTEROID_VEL
         self.xv = self.xdir * random.randrange(1, 3)
         self.yv = self.ydir * random.randrange(1, 3)
 
@@ -383,7 +415,8 @@ run = True
 #bandera para verificar si el juego esta siendo renderizado para saber si debe finalizar el codigo
 def comenzar_juego():
     global run, count, player_bullet, asteroids, lives, gg, score, stars, fire_boost, f_boost
-    while run:  
+    soundtrack_sfx.play(loops=-1)  
+    while run:
         clock.tick(60)
         count += 1
         if not gg:
@@ -404,6 +437,7 @@ def comenzar_juego():
                 if player.rect.colliderect(a.rect):
                     lives -= 1
                     asteroids.pop(asteroids.index(a))
+                    hit_sfx.play()
                     break
 
                 # Colisión entre bala y asteroide
@@ -417,6 +451,8 @@ def comenzar_juego():
                             na2.x, na2.y = a.x, a.y
                             asteroids.append(na1)
                             asteroids.append(na2)
+                            asteroidL_sfx.play()
+                            
                         elif a.rank == 2:
                             score += 20
                             na1 = Asteroid(1)
@@ -425,10 +461,14 @@ def comenzar_juego():
                             na2.x, na2.y = a.x, a.y
                             asteroids.append(na1)
                             asteroids.append(na2)
+                            asteroidM_sfx.play()
+                            
                         else:    
                             score += 50
                         asteroids.pop(asteroids.index(a))
                         player_bullet.pop(player_bullet.index(b))
+                        asteroidS_sfx.play()
+                        
                         break
 
             for s in stars[:]:  # Iterar sobre una copia de la lista
@@ -445,10 +485,13 @@ def comenzar_juego():
                         if s.effect == 'boost':
                             fire_boost = True
                             f_boost = count
+                            pickup_sfx.play()
                         elif s.effect == 'lesslife':
                             lives -= 1
+                            hit_sfx.play()
                         elif s.effect == 'morelife':
                             lives += 1 
+                            powerup_sfx.play()
 
                         stars.remove(s)
                         player_bullet.remove(b)
@@ -459,20 +502,25 @@ def comenzar_juego():
                         if s.effect == 'boost':
                             fire_boost = True
                             f_boost = count
+                            pickup_sfx.play()
                         elif s.effect == 'lesslife':
                             lives -= 1
+                            hit_sfx.play()
                         elif s.effect == 'morelife':
                             lives += 1 
-
+                            powerup_sfx.play()
                         stars.remove(s)  # Eliminar la estrella después de recogerla
 
             if lives <= 0:
+                dead_sfx.play()
                 gg = True
 
             if f_boost != -1:
                 if count - f_boost > 500:
+                    powerdown_sfx.play()
                     fire_boost = False
                     f_boost = -1
+                    
 
             keys = pygame.key.get_pressed()
             if keys[pygame.K_a]:
@@ -486,6 +534,8 @@ def comenzar_juego():
             if keys[pygame.K_SPACE]:
                 if fire_boost:
                     player_bullet.append(Bullet())
+                    rapidshoot_sfx.play()
+                    
     
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -495,13 +545,15 @@ def comenzar_juego():
                     if not gg:
                         if not fire_boost:
                             player_bullet.append(Bullet())
+                            shoot_sfx.play()
                     else:
                         gg = False
                         lives = 3
                         score = 0
                         asteroids.clear()
                         stars.clear()
-
+                if event.key == pygame.K_m:
+                    isSoundOn = not isSoundOn
         redraw_game_window()
     pygame.quit()           
 

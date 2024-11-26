@@ -1,5 +1,6 @@
 import pygame
 
+
 pygame.font.init()
 
 #scaled_sprite = pygame.transform.scale(sprite, (100, 100))
