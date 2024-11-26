@@ -430,21 +430,7 @@ def comenzar_juego():
                         asteroids.pop(asteroids.index(a))
                         player_bullet.pop(player_bullet.index(b))
                         break
-        
-            """for s in stars:
-                s.x += s.xv
-                s.y += s.yv
-                if s.x < -100 - s.w or s.x > SX + 100 or s.y > SY + 100 or s.y < -100 - s.h:
-                    stars.pop(stars.index(s))
-                    break
-                for b in player_bullet:
-                    if (b.x >= s.x and b.x <= s.x + s.w) or b.x + b.w >= s.x and b.x + b.w <= s.x + s.w:
-                        if (b.y >= s.y and b.y <= s.y + s.h) or b.y + b.h >= s.y and b.y + b.h <= s.y + s.h:
-                            fire_boost = True
-                            rfStart = count
-                            stars.pop(stars.index(s))
-                            player_bullet.pop(player_bullet.index(b))
-                            break"""
+
             for s in stars[:]:  # Iterar sobre una copia de la lista
                 s.move()  # Usar el método move para actualizar posición
 
