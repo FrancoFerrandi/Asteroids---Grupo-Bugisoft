@@ -1,5 +1,5 @@
 import pygame
-
+from settings import BULLET_SIZE
 
 pygame.font.init()
 
@@ -30,7 +30,7 @@ bullet_e_sprite = pygame.image.load("assets/sprites/bullet_e.png")
 bullet_e_big = pygame.transform.scale(bullet_e_sprite, (10, 10))
 
 bullet_f_sprite = pygame.image.load("assets/sprites/bullet_f.png")
-bullet_f_big = pygame.transform.scale(bullet_f_sprite, (10, 10))
+bullet_f_big = pygame.transform.scale(bullet_f_sprite, (BULLET_SIZE, BULLET_SIZE))
 
 #asteroides
 
