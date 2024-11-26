@@ -47,7 +47,7 @@ def menu_principal():
                     opcion_elegida = (opcion_elegida + 1) % len(opciones_menu)
                     select_sfx.play()
                 if event.key == pygame.K_RETURN:
-                    select_sfx.play()
+                    clickselect_sfx.play()
                     if opcion_elegida == 0:  # Comenzar juego
                         bandera_menu = False
                         comenzar_juego()
@@ -84,6 +84,7 @@ def mostrar_controles():
                 sys.exit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
+                    returnselect_sfx.play()
                     bandera_controles = False
 
         pygame.display.update()
@@ -111,8 +112,8 @@ def mostrar_creditos():
                 sys.exit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
+                    returnselect_sfx.play()
                     bandera_creditos = False
-
         pygame.display.update()
     menu_principal()
 

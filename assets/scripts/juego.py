@@ -22,6 +22,8 @@ soundtrack_sfx.set_volume(GAMEOST_VOLUME)
 shoot_sfx = pygame.mixer.Sound("assets/sounds/laserShoot.wav")
 rapidshoot_sfx = pygame.mixer.Sound("assets/sounds/rapidshoot.wav")
 
+shoot_sfx.set_volume(SHOOT_VOLUME)
+
 asteroidL_sfx = pygame.mixer.Sound("assets/sounds/explosion.wav")
 asteroidM_sfx = pygame.mixer.Sound("assets/sounds/explosion_m.wav")
 asteroidS_sfx = pygame.mixer.Sound("assets/sounds/explosion_s.wav")
@@ -36,8 +38,13 @@ powerdown_sfx = pygame.mixer.Sound("assets/sounds/powerdown.wav")
 
 select_sfx = pygame.mixer.Sound("assets/sounds/select.wav")
 
-dead_sfx = pygame.mixer.Sound("assets/sounds/dead.wav")
+clickselect_sfx = pygame.mixer.Sound("assets/sounds/blipSelect.wav")
 
+returnselect_sfx = pygame.mixer.Sound("assets/sounds/backSelect.wav")
+
+
+dead_sfx = pygame.mixer.Sound("assets/sounds/dead.wav")
+startengine_sfx = pygame.mixer.Sound("assets/sounds/startengine.wav")
 
 clock = pygame.time.Clock() 
 display = pygame.display.set_mode((SX, SY))
@@ -290,8 +297,8 @@ class Star():
         self.ydir = 1 if self.y < SY // 2 else -1
 
         # Velocidad
-        self.xv = self.xdir * 2
-        self.yv = self.ydir * 2
+        self.xv = self.xdir * FAKEHEAL_VEL
+        self.yv = self.ydir * FAKEHEAL_VEL
 
         # Rectángulo de colisión
         self.rect = pygame.Rect(self.x, self.y, self.w, self.h)
@@ -355,8 +362,8 @@ class LifeStar():
         self.ydir = 1 if self.y < SY // 2 else -1
 
         # Velocidad
-        self.xv = self.xdir * 2
-        self.yv = self.ydir * 2
+        self.xv = self.xdir * HEAL_VEL
+        self.yv = self.ydir * HEAL_VEL
 
         # Rectángulo de colisión
         self.rect = pygame.Rect(self.x, self.y, self.w, self.h)
@@ -415,7 +422,8 @@ run = True
 #bandera para verificar si el juego esta siendo renderizado para saber si debe finalizar el codigo
 def comenzar_juego():
     global run, count, player_bullet, asteroids, lives, gg, score, stars, fire_boost, f_boost
-    soundtrack_sfx.play(loops=-1)  
+    soundtrack_sfx.play(loops=-1)
+    startengine_sfx.play() 
     while run:
         clock.tick(60)
         count += 1
