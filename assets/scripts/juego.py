@@ -13,6 +13,7 @@ clock = pygame.time.Clock()
 display = pygame.display.set_mode((SX, SY))
 gg = False
 lives = 3
+score = 0
 
 class Player():
     def __init__(self):
@@ -219,15 +220,17 @@ def redraw_game_window():
     display.blit(bg_big, (0, 0))
     font = pygame.font.SysFont('arial',30)
     lives_text = font.render('Lives: ' + str(lives), 1, (255, 255, 255))
-    playAgainText = font.render('Press Space to Play Again', 1, (255,255,255))
+    play_again_text = font.render('Press Space to Play Again', 1, (255,255,255))
+    score_text = font.render('Score: ' + str(score), 1, (255,255,255))
     player.draw(display)
     for i in player_bullet:
         i.draw(display)
     for i in asteroids:
         i.draw(display)
     if gg:
-        display.blit(playAgainText, (SX//2-playAgainText.get_width()//2, SY//2 - playAgainText.get_height()//2))
+        display.blit(play_again_text, (SX//2-play_again_text.get_width()//2, SY//2 - play_again_text.get_height()//2))
     display.blit(lives_text, (25, 25))
+    display.blit(score_text, (SX- score_text.get_width() - 25, 25))
     pygame.display.update()
 
 player = Player()
@@ -238,7 +241,7 @@ count = 0
 run = True
 #bandera para verificar si el juego esta siendo renderizado para saber si debe finalizar el codigo
 def comenzar_juego():
-    global run, count, player_bullet, asteroids, lives, gg
+    global run, count, player_bullet, asteroids, lives, gg, score
     while run:  
         clock.tick(60)
         count += 1
@@ -262,6 +265,7 @@ def comenzar_juego():
                 for b in player_bullet:
                     if b.rect.colliderect(a.rect):
                         if a.rank == 3:
+                            score += 10
                             na1 = Asteroid(2)
                             na2 = Asteroid(2)
                             na1.x, na1.y = a.x, a.y
@@ -269,12 +273,15 @@ def comenzar_juego():
                             asteroids.append(na1)
                             asteroids.append(na2)
                         elif a.rank == 2:
+                            score += 20
                             na1 = Asteroid(1)
                             na2 = Asteroid(1)
                             na1.x, na1.y = a.x, a.y
                             na2.x, na2.y = a.x, a.y
                             asteroids.append(na1)
                             asteroids.append(na2)
+                        else:    
+                            score += 50
                         asteroids.pop(asteroids.index(a))
                         player_bullet.pop(player_bullet.index(b))
                         break
@@ -302,6 +309,7 @@ def comenzar_juego():
                     else:
                         gg = False
                         lives = 3
+                        score = 0
                         asteroids.clear()
 
         redraw_game_window()
