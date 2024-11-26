@@ -21,7 +21,7 @@ heal_sprite = pygame.image.load("assets/sprites/star_f.png")
 heal_big = pygame.transform.scale(heal_sprite, (1500, 1500))
 
 fakeheal_sprite = pygame.image.load("assets/sprites/star_e.png")
-fakeheal_big = pygame.transform.scale(fakeheal_sprite, (1500, 1500))
+fakeheal_big = pygame.transform.scale(fakeheal_sprite, (30, 30))
 
 #balas
 
