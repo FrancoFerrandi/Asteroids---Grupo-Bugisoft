@@ -418,6 +418,98 @@ asteroids = []
 stars = []
 count = 0
 
+def guardar_puntuacion(nombre, puntuacion):
+    with open("puntuaciones.txt", "a") as file:
+        file.write(f"{nombre}: {puntuacion}\n")
+
+def leer_puntuaciones():
+    try:
+        with open("puntuaciones.txt", "r") as file:
+            puntuaciones = []
+            for linea in file:
+                nombre, puntuacion = linea.strip().split(": ")
+                puntuaciones.append((nombre, int(puntuacion)))
+            return puntuaciones
+    except FileNotFoundError:
+        return []
+
+font = pygame.font.Font(None, 40)  # Fuente para texto
+
+def mostrar_pantalla_game_over():
+    global run, gg
+    input_active = True
+    nombre = ""
+    
+    while input_active:
+        display.fill((0, 0, 0))  # Pantalla negra
+        texto_game_over = font.render("GAME OVER", True, (255, 255, 255))
+        texto_ingresa_nombre = font.render("Ingrese su nombre:", True, (255, 255, 255))
+        texto_nombre = font.render(nombre, True, (255, 255, 255))
+
+        display.blit(texto_game_over, (SX // 2 - texto_game_over.get_width() // 2, 100))
+        display.blit(texto_ingresa_nombre, (SX // 2 - texto_ingresa_nombre.get_width() // 2, 200))
+        display.blit(texto_nombre, (SX // 2 - texto_nombre.get_width() // 2, 300))
+        pygame.display.update()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+                input_active = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN and nombre != "":
+                    guardar_puntuacion(nombre, score)
+                    gg = False  # Reiniciar el juego
+                    input_active = False
+                    mostrar_top_5()
+                    reset_juego()  # Reiniciar variables del juego
+                elif event.key == pygame.K_BACKSPACE:
+                    nombre = nombre[:-1]
+                else:
+                    if len(nombre) < 10:
+                        nombre += event.unicode
+
+def mostrar_top_5():
+    # Leer puntuaciones desde el archivo
+    puntuaciones = leer_puntuaciones()
+    puntuaciones.sort(key=lambda x: x[1], reverse=True)  # Ordenar por puntuación (de mayor a menor)
+    top_5 = puntuaciones[:5]  # Obtener las 5 mejores puntuaciones
+
+    # Mostrar pantalla con Top 5
+    mostrando_top_5 = True
+    while mostrando_top_5:
+        display.fill((0, 0, 0))  # Fondo negro
+        titulo = font.render("TOP 5 JUGADORES", True, (255, 255, 255))
+        display.blit(titulo, (SX // 2 - titulo.get_width() // 2, 50))
+
+        # Mostrar cada entrada del Top 5
+        for i, (nombre, puntuacion) in enumerate(top_5):
+            texto_puntuacion = font.render(f"{i + 1}. {nombre}: {puntuacion}", True, (255, 255, 255))
+            display.blit(texto_puntuacion, (SX // 2 - texto_puntuacion.get_width() // 2, 150 + i * 50))
+
+        texto_salir = font.render("Presione ENTER para continuar", True, (255, 255, 255))
+        display.blit(texto_salir, (SX // 2 - texto_salir.get_width() // 2, SY - 100))
+
+        pygame.display.update()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                mostrando_top_5 = False
+                global run
+                run = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    mostrando_top_5 = False
+
+def reset_juego():
+    global lives, score, asteroids, player_bullet, stars
+    lives = 3
+    score = 0
+    asteroids.clear()
+    player_bullet.clear()
+    stars.clear()
+
+
+
 run = True
 #bandera para verificar si el juego esta siendo renderizado para saber si debe finalizar el codigo
 def comenzar_juego():
@@ -543,7 +635,9 @@ def comenzar_juego():
                 if fire_boost:
                     player_bullet.append(Bullet())
                     rapidshoot_sfx.play()
-                    
+
+        else:
+            mostrar_pantalla_game_over()           
     
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -556,10 +650,7 @@ def comenzar_juego():
                             shoot_sfx.play()
                     else:
                         gg = False
-                        lives = 3
-                        score = 0
-                        asteroids.clear()
-                        stars.clear()
+                        reset_juego()
                 if event.key == pygame.K_m:
                     isSoundOn = not isSoundOn
         redraw_game_window()
