@@ -196,7 +196,7 @@ class Asteroid():
         Initializes an asteroid with a random size and position.
 
         Args:
-            rank (int): The size of the asteroid (1 = large, 2 = medium, 3 = small).
+            rank (int): The size of the asteroid (3 = large, 2 = medium, 1 = small).
         """
         self.rank = rank
         if self.rank == 1:
@@ -596,7 +596,7 @@ def start_game():
                         asteroidS_sfx.play()  # Small asteroid destroyed sound
                         break
 
-            for s in stars[:]:  # Iterate over a copy of the list to avoid modification issues
+            for s in stars[:]:  # Iterate over a copy of the list to avoid modification issues (shallow copy) 
                 s.move()
 
                 # Remove stars outside the visible area

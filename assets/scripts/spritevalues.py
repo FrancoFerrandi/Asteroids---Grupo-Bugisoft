@@ -45,9 +45,9 @@ asteroid_l_big = pygame.transform.scale(asteroid_l_sprite, (100, 100))
 
 #logo
 logo = pygame.image.load("assets/sprites/logo.png")
-logo_grande = logo_grande = pygame.transform.scale(logo, (350,350))
+logo_large = logo_grande = pygame.transform.scale(logo, (350,350))
 
 #fuente menu # (Utilizamos la fuente DejaVuSans ya que es una fuente que admite los simbolos de flechas y barra espaciadora)
 deja_vu_sans = pygame.font.Font("assets/sprites/DejaVuSans.ttf")
-fuente_titulo = pygame.font.Font("assets/sprites/DejaVuSans.ttf", (64)) 
-fuente_menu = pygame.font.Font("assets/sprites/DejaVuSans.ttf", (40))
+font_title = pygame.font.Font("assets/sprites/DejaVuSans.ttf", (64)) 
+font_menu = pygame.font.Font("assets/sprites/DejaVuSans.ttf", (40))

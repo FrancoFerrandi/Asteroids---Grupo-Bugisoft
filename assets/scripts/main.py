@@ -1,120 +1,173 @@
 import pygame
 import sys
-from juego import *
-from spritevalues import *
-from settings import *
-from sfx import *
+from juego import * 
+from spritevalues import * 
+from settings import *  
+from sfx import * 
+
+# Initialize Pygame and Pygame Mixer
 pygame.init()
 pygame.mixer.init()
 
+# Load sound effects
 select_sfx = pygame.mixer.Sound("assets/sounds/select.wav")
 
-ALTO, ANCHO = 720, 720 
 
-ventana = pygame.display.set_mode((ALTO, ANCHO))
-pygame.display.set_caption("Menu principal")
+# Set window dimensions
+HEIGHT, WIDTH = 720, 720
 
-NEGRO = (0, 0, 0)
-BLANCO = (255, 255, 255)
-GRIS = (100, 100, 100)
+# Create the game window
+window = pygame.display.set_mode((HEIGHT, WIDTH))
+pygame.display.set_caption("Main Menu")
 
-opciones_menu = ["Comenzar ", "Controles", "Créditos", "Salir del juego"]
-opcion_elegida = 0
+# Define colors
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+GRAY = (100, 100, 100)
 
-def menu_principal():
-    global opcion_elegida
+# Menu options and selected option index
+menu_options = ["Start", "Controls", "Credits", "Exit Game"]
+selected_option = 0
 
-    bandera_menu = True
-    while bandera_menu:
-        ventana.fill(NEGRO)
-        texto_titulo = fuente_titulo.render("ASTEROIDS", True, BLANCO)
-        ventana.blit(texto_titulo, (ANCHO // 2 - texto_titulo.get_width() // 2, ALTO // 4))
+def main_menu():
+    """
+    Displays the main menu and handles user interaction for navigating through the options.
+    """
+    global selected_option
 
-        for i, option in enumerate(opciones_menu):
-            color = BLANCO if i == opcion_elegida else GRIS
-            text = fuente_menu.render(option, True, color)
-            ventana.blit(text, (ANCHO // 2 - text.get_width() // 2, ALTO // 2 + i * 60))
+    menu_running = True
+    while menu_running:
+        # Fill the window with the background color
+        window.fill(BLACK)
 
+        # Render and display the title
+        title_text = font_title.render("ASTEROIDS", True, WHITE)
+        window.blit(
+            title_text, (WIDTH // 2 - title_text.get_width() // 2, HEIGHT // 4)
+        )
+
+        # Render and display each menu option
+        for i, option in enumerate(menu_options):
+            color = WHITE if i == selected_option else GRAY
+            option_text = font_menu.render(option, True, color)
+            window.blit(
+                option_text,
+                (WIDTH // 2 - option_text.get_width() // 2, HEIGHT // 2 + i * 60),
+            )
+
+        # Handle user input
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:
-                    opcion_elegida = (opcion_elegida - 1) % len(opciones_menu)
-                    select_sfx.play()
+                    selected_option = (selected_option - 1) % len(menu_options)
+                    select_sfx.play()  # Play selection sound
                 if event.key == pygame.K_DOWN:
-                    opcion_elegida = (opcion_elegida + 1) % len(opciones_menu)
-                    select_sfx.play()
+                    selected_option = (selected_option + 1) % len(menu_options)
+                    select_sfx.play()  # Play selection sound
                 if event.key == pygame.K_RETURN:
-                    clickselect_sfx.play()
-                    if opcion_elegida == 0:  # Comenzar juego
-                        bandera_menu = False
+                    clickselect_sfx.play()  # Play confirmation sound
+                    if selected_option == 0:  # Start game
+                        menu_running = False
                         start_game()
-                        
-                    elif opcion_elegida == 1:  # Controles
-                        mostrar_controles()
-                    elif opcion_elegida == 2:  # Créditos
-                        mostrar_creditos()
-                    elif opcion_elegida == 3:  # Salir del juego
+
+                    elif selected_option == 1:  # Show controls
+                        show_controls()
+
+                    elif selected_option == 2:  # Show credits
+                        show_credits()
+
+                    elif selected_option == 3:  # Exit the game
                         pygame.quit()
                         sys.exit()
 
-        pygame.display.update()
+        pygame.display.update()  # Update the display
 
-def mostrar_controles():
-    bandera_controles = True
-    while bandera_controles:
-        ventana.fill(NEGRO)
+def show_controls():
+    """
+    Displays the controls screen and handles user interaction to return to the main menu.
+    """
+    controls_running = True
+    while controls_running:
+        # Fill the window with the background color
+        window.fill(BLACK)
 
-        texto_controles = [
-            "Controles",
-            "Movimiento: \u2191 \u2193 \u2190 \u2192",
-            "Disparar: \u2423",
-            "Rotar: A D",
+        # Define the text for the controls screen
+        controls_text = [
+            "Controls",
+            "Move: \u2191 \u2193 \u2190 \u2192",
+            "Shoot: \u2423",
+            "Rotate: A D",
             " ",
-            "Presione ESC para volver"
+            "Press ESC to return",
         ]
-        for i, line in enumerate(texto_controles):
-            text = fuente_menu.render(line, True, BLANCO)
-            ventana.blit(text, (ANCHO // 2 - text.get_width() // 2, ALTO // 3 + i * 60))
+
+        # Render and display each line of the controls text
+        for i, line in enumerate(controls_text):
+            text = font_menu.render(line, True, WHITE)
+            window.blit(
+                text, (WIDTH // 2 - text.get_width() // 2, HEIGHT // 3 + i * 60)
+            )
+
+        # Handle user input
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    returnselect_sfx.play()
-                    bandera_controles = False
+                    returnselect_sfx.play()  # Play return sound
+                    controls_running = False
 
-        pygame.display.update()
-    menu_principal()
+        pygame.display.update()  # Update the display
 
-def mostrar_creditos():
-    bandera_creditos = True
-    while bandera_creditos:
-        ventana.fill(NEGRO)
-        ventana.blit(logo_grande, (190,-25))
-        texto_creditos = [
+    main_menu()  # Return to the main menu
+
+
+def show_credits():
+    """
+    Displays the credits screen and handles user interaction to return to the main menu.
+    """
+    credits_running = True
+    while credits_running:
+        # Fill the window with the background color
+        window.fill(BLACK)
+
+        # Display a large logo (assumes the logo is loaded)
+        window.blit(logo_large, (190, -25))
+
+        # Define the text for the credits screen
+        credits_text = [
             "Tobias Schmidt",
             "Franco Ferrandi",
             "Tomas Garabenta",
             " ",
-            "Presione ESC para volver"
+            "Press ESC to return",
         ]
-        for i, line in enumerate(texto_creditos):
-            text = fuente_menu.render(line, True, BLANCO)
-            ventana.blit(text, (ANCHO // 2 - text.get_width() // 2, ALTO // 2 + i * 50))
 
+        # Render and display each line of the credits text
+        for i, line in enumerate(credits_text):
+            text = font_menu.render(line, True, WHITE)
+            window.blit(
+                text, (WIDTH // 2 - text.get_width() // 2, HEIGHT // 2 + i * 50)
+            )
+
+        # Handle user input
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    returnselect_sfx.play()
-                    bandera_creditos = False
-        pygame.display.update()
-    menu_principal()
+                    returnselect_sfx.play()  # Play return sound
+                    credits_running = False
 
-menu_principal()
+        pygame.display.update()  # Update the display
+
+    main_menu()  # Return to the main menu
+
+
+# Start the main menu
+main_menu()
