@@ -50,7 +50,7 @@ def menu_principal():
                     clickselect_sfx.play()
                     if opcion_elegida == 0:  # Comenzar juego
                         bandera_menu = False
-                        comenzar_juego()
+                        start_game()
                         
                     elif opcion_elegida == 1:  # Controles
                         mostrar_controles()
