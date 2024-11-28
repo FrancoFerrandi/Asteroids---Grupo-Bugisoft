@@ -7,3 +7,6 @@ adwd: 320
 adawd: 70
 adwdd: 50
 lim: 460
+awdawdwd: 630
+adawdawdwd: 180
+franke: 5200

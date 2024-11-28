@@ -5,55 +5,10 @@ from spritevalues import *
 import random
 from sfx import *
 
-
-
-
-
 pygame.init() # inicializa todos los módulos de Pygame que sean necesarios para ejecutar un juego o aplicación (display, font, event)
 pygame.mixer.init()
 pygame.display.set_caption("Asteroids")
 
-
-
-#Sonidos que hay que modulizar en el archivo sfx.py(no puedo modulizar que la chupe este codigo)
-soundtrack_sfx = pygame.mixer.Sound("assets/sounds/game_soundtrack.mp3")
-soundtrack_sfx.set_volume(GAMEOST_VOLUME)
-
-shoot_sfx = pygame.mixer.Sound("assets/sounds/laserShoot.wav")
-rapidshoot_sfx = pygame.mixer.Sound("assets/sounds/rapidshoot.wav")
-
-shoot_sfx.set_volume(SHOOT_VOLUME)
-
-asteroidL_sfx = pygame.mixer.Sound("assets/sounds/explosion.wav")
-asteroidM_sfx = pygame.mixer.Sound("assets/sounds/explosion_m.wav")
-asteroidS_sfx = pygame.mixer.Sound("assets/sounds/explosion_s.wav")
-
-hit_sfx = pygame.mixer.Sound("assets/sounds/hit.wav")
-
-pickup_sfx = pygame.mixer.Sound("assets/sounds/pickup.wav")
-
-
-powerup_sfx = pygame.mixer.Sound("assets/sounds/powerup.wav")
-powerdown_sfx = pygame.mixer.Sound("assets/sounds/powerdown.wav")
-
-select_sfx = pygame.mixer.Sound("assets/sounds/select.wav")
-
-clickselect_sfx = pygame.mixer.Sound("assets/sounds/blipSelect.wav")
-
-returnselect_sfx = pygame.mixer.Sound("assets/sounds/backSelect.wav")
-
-
-dead_sfx = pygame.mixer.Sound("assets/sounds/dead.wav")
-startengine_sfx = pygame.mixer.Sound("assets/sounds/startengine.wav")
-
-clock = pygame.time.Clock() 
-display = pygame.display.set_mode((SX, SY))
-gg = False
-lives = 3
-score = 0
-fire_boost = False
-f_boost = -1
-isSoundOn = True
 
 
 class Player():
@@ -451,11 +406,6 @@ def redraw_game_window():
     display.blit(score_text, (SX- score_text.get_width() - 25, 25))
     pygame.display.update()
 
-player = Player()
-player_bullet = []
-asteroids = []
-stars = []
-count = 0
 
 def save_score(name, score):
     """
@@ -486,9 +436,8 @@ def read_scores():
     except FileNotFoundError:
         return []
 
-
+player = Player()
 font = pygame.font.Font(None, 40)  # Font for text rendering
-
 
 def show_game_over_screen():
     """
@@ -571,9 +520,6 @@ def reset_game():
     asteroids.clear()
     player_bullet.clear()
     stars.clear()
-
-run = True
-#bandera para verificar si el juego esta siendo renderizado para saber si debe finalizar el codigo
 
 def start_game():
     """
