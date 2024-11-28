@@ -1,6 +1,6 @@
 import pygame
 import sys
-from juego import * 
+from game import * 
 from spritevalues import * 
 from settings import *  
 from sfx import * 
