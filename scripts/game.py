@@ -1,14 +1,13 @@
 import pygame
 import math
-from settings import *
-from spritevalues import *
 import random
-from sfx import *
+from .spritevalues import *
+from .sfx import *
+
 
 pygame.init() # inicializa todos los módulos de Pygame que sean necesarios para ejecutar un juego o aplicación (display, font, event)
 pygame.mixer.init()
 pygame.display.set_caption("Asteroids")
-
 
 
 class Player():
@@ -46,12 +45,12 @@ class Player():
         self.rotateRect.center = (self.x, self.y)
 
         # Calculate initial cosine and sine for movement
-        self.cos = math.cos(math.radians(self.angle + 90))
+        self.cos = math.cos(math.radians(self.angle + 90)) 
         self.sin = math.sin(math.radians(self.angle + 90))
         
         # Determine the position of the player's "head" (used for bullet firing)
         self.head = (self.x + self.cos * self.w // 2, self.y + self.sin * self.h // 2)
-        self.rect = pygame.Rect(self.x - self.w // 2, self.y - self.h // 2, self.w, self.h)  # Collision rectangle
+        self.rect = pygame.Rect(self.x - self.w // 2, self.y - self.h // 2, self.w, self.h)  # Collision rectangle #default: - - | current: + +
 
     def update_rect(self):
         """
@@ -79,7 +78,7 @@ class Player():
         self.rotateRect.center = (self.x, self.y)
         self.cos = math.cos(math.radians(self.angle + 90))
         self.sin = math.sin(math.radians(self.angle + 90))
-        self.head = (self.x + self.cos * self.w // 2, self.y + self.sin * self.h // 2)
+        self.head = (self.x + self.cos * self.w // 2, self.y + self.sin * self.h // 2) #default: + | current: -
 
     def rotate_right(self):
         """
@@ -92,7 +91,7 @@ class Player():
         self.rotateRect.center = (self.x, self.y)
         self.cos = math.cos(math.radians(self.angle + 90))
         self.sin = math.sin(math.radians(self.angle + 90))
-        self.head = (self.x + self.cos * self.w // 2, self.y + self.sin * self.h // 2)
+        self.head = (self.x + self.cos * self.w // 2, self.y + self.sin * self.h // 2) #default: + | current: -
 
     def move_forward(self):
         """
@@ -382,12 +381,11 @@ def redraw_game_window():
     asteroids, stars, and UI elements such as lives and score. It also handles the 
     display of power-up indicators and the "Game Over" message when applicable.
     """
-    
+
     display.blit(bg_big, (0, 0))
-    font = pygame.font.SysFont('arial',30)
-    lives_text = font.render('Lives: ' + str(lives), 1, (255, 255, 255))
-    play_again_text = font.render('Press Space to Play Again', 1, (255,255,255))
-    score_text = font.render('Score: ' + str(score), 1, (255,255,255))
+    lives_text = font_ingame.render('Vidas: ' + str(lives), 1, (255, 255, 255))
+    play_again_text = font_ingame.render('Apreta \u2423 para volver a jugar', 1, (255,255,255))
+    score_text = font_ingame.render('Score: ' + str(score), 1, (255,255,255))
     player.draw(display)
     for pb in player_bullet:
         pb.draw(display)
@@ -401,10 +399,11 @@ def redraw_game_window():
         pygame.draw.rect(display, (255, 255, 255), [SX//2 - 50, 20, 100 - 100*(count - f_boost)/500, 20])
 
     if gg:
-        display.blit(play_again_text, (SX//2-play_again_text.get_width()//2, SY//2 - play_again_text.get_height()//2))
+        display.blit(play_again_text, (SX // 2 - play_again_text.get_width() // 2, SY // 2 - play_again_text.get_height() // 2))
     display.blit(lives_text, (25, 25))
-    display.blit(score_text, (SX- score_text.get_width() - 25, 25))
+    display.blit(score_text, (SX - score_text.get_width() - 25, 25))
     pygame.display.update()
+
 
 
 def save_score(name, score):
@@ -437,7 +436,6 @@ def read_scores():
         return []
 
 player = Player()
-font = pygame.font.Font(None, 40)  # Font for text rendering
 
 def show_game_over_screen():
     """
@@ -450,9 +448,9 @@ def show_game_over_screen():
 
     while input_active:
         display.fill((0, 0, 0))  # Black screen
-        game_over_text = font.render("GAME OVER", True, (255, 255, 255))
-        enter_name_text = font.render("Enter your name:", True, (255, 255, 255))
-        name_text = font.render(name, True, (255, 255, 255))
+        game_over_text = font_menu.render("GAME OVER", True, (255, 255, 255))
+        enter_name_text = font_menu.render("Ingresa tu nombre:", True, (255, 255, 255))
+        name_text = font_menu.render(name, True, (255, 255, 255))
 
         display.blit(game_over_text, (SX // 2 - game_over_text.get_width() // 2, 100))
         display.blit(enter_name_text, (SX // 2 - enter_name_text.get_width() // 2, 200))
@@ -470,6 +468,7 @@ def show_game_over_screen():
                     input_active = False
                     show_top_5()
                     reset_game()  # Reset game variables
+                    startengine_sfx.play()
                 elif event.key == pygame.K_BACKSPACE:
                     name = name[:-1]
                 else:
@@ -489,14 +488,14 @@ def show_top_5():
     showing_top_5 = True
     while showing_top_5:
         display.fill((0, 0, 0))  # Black background
-        title = font.render("TOP 5 PLAYERS", True, (255, 255, 255))
+        title = font_menu.render("TOP 5 JUGADORES", True, (255, 255, 255))
         display.blit(title, (SX // 2 - title.get_width() // 2, 50))
 
         for i, (name, score) in enumerate(top_5):
-            score_text = font.render(f"{i + 1}. {name}: {score}", True, (255, 255, 255))
+            score_text = font_menu.render(f"{i + 1}. {name}: {score}", True, (255, 255, 255))
             display.blit(score_text, (SX // 2 - score_text.get_width() // 2, 150 + i * 50))
 
-        exit_text = font.render("Press ENTER to continue", True, (255, 255, 255))
+        exit_text = font_menu.render("Oprime ENTER para volver a jugar", True, (255, 255, 255))
         display.blit(exit_text, (SX // 2 - exit_text.get_width() // 2, SY - 100))
 
         pygame.display.update()
@@ -545,14 +544,14 @@ def start_game():
         count += 1  # Increment the game counter
 
         if not gg:  # Game is running
-            if count % 50 == 0:  # Every 50 frames
+            if count % ASTEROID_CHANCE == 0:  # Every 50 frames
                 ran = random.choice([1, 1, 1, 2, 2, 3])  # Random asteroid rank
                 asteroids.append(Asteroid(ran))  # Add a new asteroid
 
-            if count % 1000 == 0:  # Every 1000 frames
+            if count % STAR_CHANCE == 0:  # Every 1000 frames
                 stars.append(Star())  # Add a new star
 
-            if count % 2500 == 0:  # Every 2500 frames
+            if count % LIFESTAR_CHANCE == 0:  # Every 2500 frames
                 stars.append(LifeStar())  # Add a life star
 
             for i in player_bullet:  # Move the bullets
@@ -651,18 +650,19 @@ def start_game():
 
             # Player movement and shooting
             keys = pygame.key.get_pressed()
-            if keys[pygame.K_a]:
+            if keys[pygame.K_LEFT]:
                 player.rotate_left()
-            if keys[pygame.K_d]:
+            if keys[pygame.K_RIGHT]:
                 player.rotate_right()
-            if keys[pygame.K_w]:
+            if keys[pygame.K_UP]:
                 player.move_forward()
-            if keys[pygame.K_s]:
+            if keys[pygame.K_DOWN]:
                 player.move_backwards()
             if keys[pygame.K_SPACE]:
                 if fire_boost:
                     player_bullet.append(Bullet())  # Fire with boost
                     rapidshoot_sfx.play()  # Rapid shoot sound
+
 
         else:  # If game over
             show_game_over_screen()
@@ -686,3 +686,5 @@ def start_game():
         redraw_game_window()  # Redraw the game window
 
     pygame.quit()  # Quit pygame when the loop ends
+
+

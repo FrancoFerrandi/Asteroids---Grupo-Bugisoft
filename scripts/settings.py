@@ -16,22 +16,27 @@ ASTEROID_VEL = 1 #DEFAULT 1
 FAKEHEAL_VEL = 2
 HEAL_VEL = 2
 
+# Definir colores
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+GRAY = (100, 100, 100)
 
 
+# Opciones del menu e inicializacion de selected_option
+menu_options = ["Comenzar","Opciones", "Controles", "Creditos", "Salir del juego"]
+selected_option = 0
 
 #VOLUMEN
-GAMEOST_VOLUME = 0.3 #DEFAULT 0.3
-SHOOT_VOLUME = 1
-EXPLOSION_VOLUME = 1
-PICKUP_VOLUME = 1
-SELECT_VOLUME = 1
-DEAD_VOLUME = 1
-HIT_VOLUME = 1
+SFX_VOLUME_LEVELS = 1
+MUSIC_VOLUME_LEVELS = 1
 
-SFX_VOLUME = 1
+#PROBABILIDAD
+
+STAR_CHANCE = 1000 #1000 MEDIUM | 100 HIGH | 10000 LOW
+LIFESTAR_CHANCE = 2500 #2500 MEDIUM | 250 HIGH | 25000 LOW
+ASTEROID_CHANCE = 50 #50 MEDIUM | 5 HIGH | 500 LOW
 
 # Variables de juego.py
-
 clock = pygame.time.Clock() 
 display = pygame.display.set_mode((SX, SY))
 gg = False
@@ -47,4 +52,5 @@ stars = []
 count = 0
 
 run = True # bandera para verificar si el juego esta siendo renderizado para saber si debe finalizar el codigo
+
 

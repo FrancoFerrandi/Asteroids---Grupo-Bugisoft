@@ -1,13 +1,2 @@
-franco: 30
-asdasdas: 30
-feli: 0
-11225: 1060
-Franco : 6820
-adwd: 320
-adawd: 70
-adwdd: 50
-lim: 460
-awdawdwd: 630
-adawdawdwd: 180
-franke: 5200
-ad: 850
+  franco: 3410
+  toto: 10700
