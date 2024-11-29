@@ -3,8 +3,7 @@ import sys
 from scripts.game import *
 from scripts.sfx import *
 
-# Load sound effects
-select_sfx = pygame.mixer.Sound("assets/sounds/select.wav")
+
 
 # Create the game window
 window = pygame.display.set_mode((SX, SY))
@@ -15,33 +14,35 @@ pygame.display.set_caption("Asteroids by Bugisoft")
 pygame.init()
 pygame.mixer.init()
 
-def main_menu():
+def main_menu() -> None:
     """
     Displays the main menu and handles user interaction for navigating through the options.
     """
-    global selected_option, window, SX, SY
+    global selected_option
 
-    menu_running = True
-    while menu_running:
+    bandera_menu = True
+    while bandera_menu:
         # Fill the window with the background color
         window.fill(BLACK)
 
         # Render and display the title
-        title_text = font_title.render("ASTEROIDS", True, WHITE)
+        title_text = font_title.render("ASTEROIDS", True, WHITE) # True se refiere al antialiasing
         window.blit(
             title_text, (SY // 2 - title_text.get_width() // 2, SX // 4)
-        )
+        )               #posicion horizontal                   #posicion vertical
 
         # Render and display each menu option
         for i, option in enumerate(menu_options):
-            color = WHITE if i == selected_option else GRAY
+            if i == selected_option:
+                color = WHITE 
+            else: color = GRAY  
             option_text = font_menu.render(option, True, color)
             window.blit(
                 option_text,
                 (SY // 2 - option_text.get_width() // 2, SX // 2 + i * 60),
             )
 
-        # Handle user input
+       # Recibe la tecla que presione el usuario 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -49,40 +50,37 @@ def main_menu():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:
                     selected_option = (selected_option - 1) % len(menu_options)
-                    select_sfx.play()  # Play selection sound
+                    select_sfx.play()  # Emite el audio de seleccion
                 if event.key == pygame.K_DOWN:
                     selected_option = (selected_option + 1) % len(menu_options)
-                    select_sfx.play()  # Play selection sound
+                    select_sfx.play()
                 if event.key == pygame.K_RETURN:
-                    clickselect_sfx.play()  # Play confirmation sound
-                    if selected_option == 0:  # Start game
-                        menu_running = False
+                    clickselect_sfx.play()  # Emite el audio de confirmacion
+                    if selected_option == 0:  # Inicia el juego
+                        bandera_menu = False # Cierra el menu
                         start_game()
-                    if selected_option == 1: # Show Settings
+                    if selected_option == 1: # Muestra el menu de opciones
                         settings_menu()
-
-                    elif selected_option == 2:  # Show controls
+                    elif selected_option == 2:  # Muestra la pantalla de controles
                         show_controls()
-
-                    elif selected_option == 3:  # Show credits
+                    elif selected_option == 3:  # Muestra la pantalla de creditos
                         show_credits()
-
-                    elif selected_option == 4:  # Exit the game
+                    elif selected_option == 4:  # Cierra el programa
                         pygame.quit()
                         sys.exit()
 
-        pygame.display.update()  # Update the display
+        pygame.display.update()  # Actualiza la imagen al terminar el loop SIEMPRE
 
-def show_controls():
+def show_controls() -> None:
     """
     Displays the controls screen and handles user interaction to return to the main menu.
     """
     bandera_controles = True
     while bandera_controles:
-        # Fill the window with the background color
+        # Llena el fondo negro
         window.fill(BLACK)
 
-        # Define the text for the controls screen
+        # Define el texto de la pantalla de controles
         controls_text = [
             "Controles",
             "Movimiento: \u2191 \u2193 \u2190 \u2192",
@@ -91,41 +89,41 @@ def show_controls():
             "Presiona ESC para volver",
         ]
 
-        # Render and display each line of the controls text
+        # Renderiza y muuestra cada linea del texto de controles
         for i, line in enumerate(controls_text):
-            text = font_menu.render(line, True, WHITE)
+            text = font_menu.render(line, True, WHITE) # Selecciona la fuente 
             window.blit(
-                text, (SY // 2 - text.get_width() // 2, SX // 3 + i * 60)
+                text, (SY // 2 - text.get_width() // 2, SX // 3 + i * 60) # Posicionamiento del texto
             )
 
-        # Handle user input
+        # Maneja la tetcla que presione el usuario
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    returnselect_sfx.play()  # Play return sound
-                    bandera_controles = False
+            if event.type == pygame.KEYDOWN: # Percibe o recibe cuando el usuario presiona una tecla
+                if event.key == pygame.K_ESCAPE: # Si la tecla es ESC 
+                    returnselect_sfx.play()  
+                    bandera_controles = False # Cierra el loop y con ello la ventana de controles
 
-        pygame.display.update()  # Update the display
+        pygame.display.update()  # Actualiza la imagen al terminar el loop SIEMPRE
 
-    main_menu()  # Return to the main menu
+    main_menu()  # Vuelve a abrir el menu principal
 
 
-def show_credits():
+def show_credits() -> None:
     """
     Displays the credits screen and handles user interaction to return to the main menu.
     """
     bandera_credits = True
     while bandera_credits:
-        # Fill the window with the background color
+        # Llena el fondo de negro
         window.fill(BLACK)
 
-        # Display a large logo (assumes the logo is loaded)
+        # Introduce el logo//// Coordenadas para el logo (Las hice a mano para que este centrado pero no tan centrado)
         window.blit(logo_large, (190, -25))
 
-        # Define the text for the credits screen
+        # Texto de la pantalla de creditos
         credits_text = [
             "Tobias Schmidt",
             "Franco Ferrandi",
@@ -134,28 +132,28 @@ def show_credits():
             "Presiona ESC para volver",
         ]
 
-        # Render and display each line of the credits text
+        # Renderiza y muestra cada linea de texto
         for i, line in enumerate(credits_text):
             text = font_menu.render(line, True, WHITE)
             window.blit(
                 text, (SY // 2 - text.get_width() // 2, SX // 2 + i * 50)
             )
 
-        # Handle user input
+        # Toma el input del usuario
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    returnselect_sfx.play()  # Play return sound
-                    bandera_credits = False
+            if event.type == pygame.KEYDOWN: # Toma el evento de cuando se presiona una tecla
+                if event.key == pygame.K_ESCAPE: # Evalua si es ESC
+                    returnselect_sfx.play()  # Efecto de audio
+                    bandera_credits = False # Si es ESC cierra el loop
 
-        pygame.display.update()  # Update the display
+        pygame.display.update()  # Actualiza la imagen al terminar el loop SIEMPRE
 
-    main_menu()  # Return to the main menu
+    main_menu()  # Abre el menu principal
 
-def settings_menu():  
+def settings_menu() -> None:  
     settings_options = ["Tamaño de la ventana", "Opciones de volumen", "Presiona ESC para volver"]  
     selected_settings_option = 0  
     bandera_settings = True  
@@ -164,7 +162,9 @@ def settings_menu():
         window.fill(BLACK)  
 
         for i, option in enumerate(settings_options):  
-            color = WHITE if i == selected_settings_option else GRAY  
+            if i == selected_settings_option:
+                color = WHITE 
+            else: color = GRAY  
             option_text = font_menu.render(option, True, color)  
             window.blit(option_text, (SY // 2 - option_text.get_width() // 2, SX // 3 + i * 60))  
 
@@ -194,7 +194,7 @@ def settings_menu():
 
         pygame.display.update()  
 
-def volume_settings():
+def volume_settings() -> None:
     global SFX_VOLUME_LEVELS, MUSIC_VOLUME_LEVELS, select_sfx, clickselect_sfx, returnselect_sfx, soundtrack_sfx
     
     volume_options = [
@@ -228,19 +228,19 @@ def volume_settings():
                     select_sfx.play()
                 if event.key == pygame.K_RETURN:
                     clickselect_sfx.play()
-                    if selected_volume_option == 0:  # Increase SFX Volume
+                    if selected_volume_option == 0:  # Aumenta el volumen de efectos
                         SFX_VOLUME_LEVELS = min(10, SFX_VOLUME_LEVELS + 1)
                         update_sfx_volume()
-                    elif selected_volume_option == 1:  # Decrease SFX Volume
+                    elif selected_volume_option == 1:  # Disminuye el volumen de efectos
                         SFX_VOLUME_LEVELS = max(0, SFX_VOLUME_LEVELS - 1)
                         update_sfx_volume()
-                    elif selected_volume_option == 2:  # Increase Music Volume
+                    elif selected_volume_option == 2:  # Aumenta el volumen de la musica
                         MUSIC_VOLUME_LEVELS = min(10, MUSIC_VOLUME_LEVELS + 1)
                         update_music_volume()
-                    elif selected_volume_option == 3:  # Decrease Music Volume
+                    elif selected_volume_option == 3:  # Disminuye el volumen de la musica
                         MUSIC_VOLUME_LEVELS = max(0, MUSIC_VOLUME_LEVELS - 1)
                         update_music_volume()
-                    elif selected_volume_option == 4:  # Return to settings
+                    elif selected_volume_option == 4:  # Vuelve a la ventana de ajustes
                         returnselect_sfx.play()
                         bandera_volumen = False
                 if event.key == pygame.K_ESCAPE:
@@ -249,9 +249,9 @@ def volume_settings():
 
         pygame.display.update()
 
-    settings_menu()  # Return to the settings menu
+    settings_menu()  # Abre el menu de ajustes para volver
 
-def update_sfx_volume():
+def update_sfx_volume()  -> None:
     global SFX_VOLUME_LEVELS
     select_sfx.set_volume(SFX_VOLUME_LEVELS * 0.1)
     clickselect_sfx.set_volume(SFX_VOLUME_LEVELS * 0.1)
@@ -267,11 +267,11 @@ def update_sfx_volume():
     powerdown_sfx.set_volume(SFX_VOLUME_LEVELS * 0.1)
     dead_sfx.set_volume(SFX_VOLUME_LEVELS * 0.1)
 
-def update_music_volume():
+def update_music_volume() -> None:
     global MUSIC_VOLUME_LEVELS
     soundtrack_sfx.set_volume(MUSIC_VOLUME_LEVELS * 0.1)
 
-def screen_size_settings():
+def screen_size_settings() -> None:
     global SX, SY, window
 
     screen_size_options = ["1. 720x720", "2. 900x900", "3. 1000x1000", "Presiona ESC para volver"]
@@ -315,7 +315,7 @@ def screen_size_settings():
 
         pygame.display.update()
 
-    settings_menu()  # Return to the settings menu
+    settings_menu()  # Abre el menu de ajustes para volver
 
      
 

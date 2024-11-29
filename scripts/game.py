@@ -401,7 +401,7 @@ def redraw_game_window():
     if gg:
         display.blit(play_again_text, (SX // 2 - play_again_text.get_width() // 2, SY // 2 - play_again_text.get_height() // 2))
     display.blit(lives_text, (25, 25))
-    display.blit(score_text, (SX - score_text.get_width() - 25, 25))
+    display.blit(score_text, (SX - score_text.get_width() - 10, 25))  
     pygame.display.update()
 
 
@@ -476,26 +476,34 @@ def show_game_over_screen():
                         name += event.unicode
 
 
-def show_top_5():
+def bubble_sort_scores(scores: list[tuple[str, int]]) -> None: #Usamos bubble sort como algoritmo de ordenamiento para ubicar los scores mayor a menor
+    n = len(scores)
+    for i in range(n):
+        for j in range(0, n-i-1):
+            if scores[j][1] < scores[j+1][1]:  # Usando < (menor que) para que sea descendiente
+                scores[j], scores[j+1] = scores[j+1], scores[j]
+
+
+def show_top_5() -> None:
     """
     Displays the Top 5 players with the highest scores on the screen.
     The player can press 'Enter' to return to the game.
     """
     scores = read_scores()
-    scores.sort(key=lambda x: x[1], reverse=True)  # Sort by score (descending)
-    top_5 = scores[:5]  # Get the top 5 scores
+    bubble_sort_scores(scores)  # Aplicacion de Bubble sort
+    top_5 = scores[:5]  # Top 5 scores mas altos
 
     showing_top_5 = True
     while showing_top_5:
-        display.fill((0, 0, 0))  # Black background
-        title = font_menu.render("TOP 5 JUGADORES", True, (255, 255, 255))
+        display.fill((BLACK))  
+        title = font_menu.render("TOP 5 JUGADORES", True, (WHITE))
         display.blit(title, (SX // 2 - title.get_width() // 2, 50))
 
         for i, (name, score) in enumerate(top_5):
-            score_text = font_menu.render(f"{i + 1}. {name}: {score}", True, (255, 255, 255))
+            score_text = font_menu.render(f"{i + 1}. {name}: {score}", True, (WHITE))
             display.blit(score_text, (SX // 2 - score_text.get_width() // 2, 150 + i * 50))
 
-        exit_text = font_menu.render("Oprime ENTER para volver a jugar", True, (255, 255, 255))
+        exit_text = font_menu.render("Oprime ENTER para volver a jugar", True, (WHITE))
         display.blit(exit_text, (SX // 2 - exit_text.get_width() // 2, SY - 100))
 
         pygame.display.update()
