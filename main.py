@@ -42,7 +42,7 @@ def main_menu() -> None:
                 (SY // 2 - option_text.get_width() // 2, SX // 2 + i * 60),
             )
 
-       # Recibe la tecla que presione el usuario 
+        # Recibe la tecla que presione el usuario 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -317,7 +317,7 @@ def screen_size_settings() -> None:
 
     settings_menu()  # Abre el menu de ajustes para volver
 
-     
+
 
 main_menu()  
 

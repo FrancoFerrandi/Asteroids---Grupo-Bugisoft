@@ -52,13 +52,13 @@ class Player():
         self.head = (self.x + self.cos * self.w // 2, self.y + self.sin * self.h // 2)
         self.rect = pygame.Rect(self.x - self.w // 2, self.y - self.h // 2, self.w, self.h)  # Collision rectangle #default: - - | current: + +
 
-    def update_rect(self):
+    def update_rect(self) -> None:
         """
         Updates the collision rectangle's position to match the player's current position.
         """
         self.rect.center = (self.x, self.y)
 
-    def draw(self, display):
+    def draw(self, display) -> None:
         """
         Draws the rotated player sprite on the game window.
 
@@ -67,7 +67,7 @@ class Player():
         """
         display.blit(self.rotateSprite, self.rotateRect)
 
-    def rotate_left(self):
+    def rotate_left(self) -> None:
         """
         Rotates the player to the left by a fixed rotation velocity.
         Updates the sprite image, rectangle, and movement direction.
@@ -80,7 +80,7 @@ class Player():
         self.sin = math.sin(math.radians(self.angle + 90))
         self.head = (self.x + self.cos * self.w // 2, self.y + self.sin * self.h // 2) #default: + | current: -
 
-    def rotate_right(self):
+    def rotate_right(self) -> None:
         """
         Rotates the player to the right by a fixed rotation velocity.
         Updates the sprite image, rectangle, and movement direction.
@@ -93,7 +93,7 @@ class Player():
         self.sin = math.sin(math.radians(self.angle + 90))
         self.head = (self.x + self.cos * self.w // 2, self.y + self.sin * self.h // 2) #default: + | current: -
 
-    def move_forward(self):
+    def move_forward(self) -> None:
         """
         Moves the player forward in the direction it is facing.
         Updates the sprite image, rectangle, and collision rectangle.
@@ -108,7 +108,7 @@ class Player():
         self.head = (self.x + self.cos * self.w // 2, self.y + self.sin * self.h // 2)
         self.update_rect()  # Update collision rectangle
 
-    def move_backwards(self):
+    def move_backwards(self) -> None:
         """
         Moves the player backward in the direction it is facing.
         Updates the sprite image, rectangle, and collision rectangle.
@@ -155,7 +155,7 @@ class Bullet():
         self.vely = self.sin * BULLET_VEL
         self.rect = pygame.Rect(self.x, self.y, self.w, self.h)  # Collision rectangle
 
-    def move(self):
+    def move(self) -> None:
         """
         Moves the bullet in the calculated direction and updates its collision rectangle.
         """
@@ -163,7 +163,7 @@ class Bullet():
         self.y -= self.vely
         self.rect.topleft = (self.x, self.y)  # Update the position of the rectangle
 
-    def draw(self, display):
+    def draw(self, display) -> None:
         """
         Draws the bullet on the game window.
 
@@ -190,7 +190,7 @@ class Asteroid():
         xv (int): The horizontal velocity of the asteroid.
         yv (int): The vertical velocity of the asteroid.
     """
-    def __init__(self, rank):
+    def __init__(self, rank: int):
         """
         Initializes an asteroid with a random size and position.
 
@@ -223,7 +223,7 @@ class Asteroid():
         self.xv = self.xdir * random.randrange(1, 3)
         self.yv = self.ydir * random.randrange(1, 3)
 
-    def move(self):
+    def move(self) -> None:
         """
         Moves the asteroid in the current direction and velocity,
         and updates its collision rectangle.
@@ -232,7 +232,7 @@ class Asteroid():
         self.y += self.yv
         self.rect.topleft = (self.x, self.y)  # Update the position of the rectangle
 
-    def draw(self, display):
+    def draw(self, display) -> None:
         """
         Draws the asteroid on the game window.
 
@@ -291,7 +291,7 @@ class Star():
         # Randomly determine if the star will give a firepower boost or reduce a life
         self.effect = random.choice(['boost', 'lesslife'])
 
-    def move(self):
+    def move(self) -> None:
         """
         Updates the position of the star and its collision rectangle.
         """
@@ -299,7 +299,7 @@ class Star():
         self.y += self.yv
         self.rect.topleft = (self.x, self.y)  # Update collision rectangle
 
-    def draw(self, display):
+    def draw(self, display) -> None:
         """
         Draws the star on the game window.
 
@@ -326,7 +326,7 @@ class LifeStar():
         rect (pygame.Rect): Collision rectangle of the star.
         effect (str): Type of effect of the star ('morelife' to restore life).
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Initializes a star with a random position outside the screen and the 'morelife' effect.
         """
@@ -356,7 +356,7 @@ class LifeStar():
         # Effect of the star (restore life)
         self.effect = 'morelife'
 
-    def move(self):
+    def move(self) -> None:
         """
         Updates the position of the star and its collision rectangle.
         """
@@ -364,7 +364,7 @@ class LifeStar():
         self.y += self.yv
         self.rect.topleft = (self.x, self.y)  # Update collision rectangle
 
-    def draw(self, display):
+    def draw(self, display) -> None:
         """
         Draws the star on the game window.
 
@@ -373,7 +373,7 @@ class LifeStar():
         """
         display.blit(self.img, (self.x, self.y))
 
-def redraw_game_window():
+def redraw_game_window() -> None:
     """
     Redraws all game elements on the game window.
 
@@ -406,7 +406,7 @@ def redraw_game_window():
 
 
 
-def save_score(name, score):
+def save_score(name: str, score: int) -> None:
     """
     Appends the player's name and score to a text file named 'puntuaciones.txt'.
     
@@ -418,7 +418,7 @@ def save_score(name, score):
         file.write(f"{name}: {score}\n")
 
 
-def read_scores():
+def read_scores() -> list:
     """
     Reads the scores from the 'puntuaciones.txt' file and returns them as a list of tuples.
     
@@ -437,7 +437,7 @@ def read_scores():
 
 player = Player()
 
-def show_game_over_screen():
+def show_game_over_screen() -> None:
     """
     Displays the 'Game Over' screen where the player can enter their name 
     and save their score. It also resets the game when the player presses 'Enter'.
@@ -517,7 +517,7 @@ def show_top_5() -> None:
                 if event.key == pygame.K_RETURN:
                     showing_top_5 = False
 
-def reset_game():
+def reset_game() -> None:
     """
     Resets the game's variables to their initial state.
     """
@@ -528,7 +528,7 @@ def reset_game():
     player_bullet.clear()
     stars.clear()
 
-def start_game():
+def start_game() -> None:
     """
     Main game loop that handles all gameplay logic.
     The game runs until the player loses all lives, at which point the game over screen is displayed.
