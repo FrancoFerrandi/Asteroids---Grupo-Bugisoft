@@ -68,60 +68,49 @@ class Player():
         display.blit(self.rotateSprite, self.rotateRect)
 
     def rotate_left(self) -> None:
-        """
-        Rotates the player to the left by a fixed rotation velocity.
-        Updates the sprite image, rectangle, and movement direction.
-        """
+        """Rotates the player to the left by a fixed rotation velocity."""
         self.angle += PLAYER_ROTATION_VEL
-        self.rotateSprite = pygame.transform.rotate(self.img, self.angle)
-        self.rotateRect = self.rotateSprite.get_rect()
-        self.rotateRect.center = (self.x, self.y)
-        self.cos = math.cos(math.radians(self.angle + 90))
-        self.sin = math.sin(math.radians(self.angle + 90))
-        self.head = (self.x + self.cos * self.w // 2, self.y + self.sin * self.h // 2) #default: + | current: -
+        self.update_sprite()
 
     def rotate_right(self) -> None:
-        """
-        Rotates the player to the right by a fixed rotation velocity.
-        Updates the sprite image, rectangle, and movement direction.
-        """
+        """Rotates the player to the right by a fixed rotation velocity."""
         self.angle -= PLAYER_ROTATION_VEL
-        self.rotateSprite = pygame.transform.rotate(self.img, self.angle)
-        self.rotateRect = self.rotateSprite.get_rect()
-        self.rotateRect.center = (self.x, self.y)
-        self.cos = math.cos(math.radians(self.angle + 90))
-        self.sin = math.sin(math.radians(self.angle + 90))
-        self.head = (self.x + self.cos * self.w // 2, self.y + self.sin * self.h // 2) #default: + | current: -
+        self.update_sprite()
 
     def move_forward(self) -> None:
-        """
-        Moves the player forward in the direction it is facing.
-        Updates the sprite image, rectangle, and collision rectangle.
-        """
+        """Moves the player forward in the direction it is facing."""
         self.x += self.cos * PLAYER_VEL
         self.y -= self.sin * PLAYER_VEL
-        self.rotateSprite = pygame.transform.rotate(self.img, self.angle)
-        self.rotateRect = self.rotateSprite.get_rect()
-        self.rotateRect.center = (self.x, self.y)
-        self.cos = math.cos(math.radians(self.angle + 90))
-        self.sin = math.sin(math.radians(self.angle + 90))
-        self.head = (self.x + self.cos * self.w // 2, self.y + self.sin * self.h // 2)
-        self.update_rect()  # Update collision rectangle
+        self.wrap_screen()
+        self.update_sprite()
 
     def move_backwards(self) -> None:
-        """
-        Moves the player backward in the direction it is facing.
-        Updates the sprite image, rectangle, and collision rectangle.
-        """
-        self.x += self.cos * PLAYER_VEL
+        """Moves the player backward in the direction it is facing."""
+        self.x -= self.cos * PLAYER_VEL
         self.y += self.sin * PLAYER_VEL
+        self.wrap_screen()
+        self.update_sprite()
+
+    def wrap_screen(self) -> None:
+        """Teletransporta al jugador si sale por los bordes de la pantalla."""
+        if self.x < 0:
+            self.x = SX
+        elif self.x > SX:
+            self.x = 0
+        if self.y < 0:
+            self.y = SY
+        elif self.y > SY:
+            self.y = 0
+
+    def update_sprite(self) -> None:
+        """Actualiza la imagen, el rectángulo rotado y las coordenadas del jugador."""
         self.rotateSprite = pygame.transform.rotate(self.img, self.angle)
         self.rotateRect = self.rotateSprite.get_rect()
         self.rotateRect.center = (self.x, self.y)
         self.cos = math.cos(math.radians(self.angle + 90))
         self.sin = math.sin(math.radians(self.angle + 90))
         self.head = (self.x + self.cos * self.w // 2, self.y + self.sin * self.h // 2)
-        self.update_rect()  # Update collision rectangle
+        self.update_rect()  # Actualiza el rectángulo de colisión
 
 class Bullet():
     """
@@ -462,7 +451,7 @@ def show_game_over_screen() -> None:
                 run = False
                 input_active = False
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN and name != "":
+                if event.key == pygame.K_RETURN and name.strip() != "":
                     save_score(name, score)
                     gg = False  # Restart the game
                     input_active = False
